@@ -27,38 +27,27 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		try {
-			AnchorPane ap = new AnchorPane();
-	        ObservableList<String> items = FXCollections.observableArrayList("View Person", "Add Person", "Add Account");
-			ListView<String> listView = new ListView<String>(items);
-			ap.setTopAnchor(listView, 0.0);
+			AnchorPane ap = new AnchorPane(); //2. En layout som tillåter en att sätta storleken på uttrymmet mellan dess element och dess parent
+	        ObservableList<String> items = FXCollections.observableArrayList("View Person", "Add Person", "Add Account"); //Sätter menyns värden annars blir listan helt tom
+			ListView<String> listView = new ListView<String>(items); //Deklarerar listview med dess värden som constructor input
+			ap.setTopAnchor(listView, 0.0); //Sätter utrymmet mellan parent och barn
 			ap.setBottomAnchor(listView, 0.0);
-			ap.getChildren().add(listView);
+			ap.getChildren().add(listView); //Lägger till listview som ett barn av 2. anchorpane
 			
-			HBox hb = new HBox();
+			HBox hb = new HBox(); //Skapar en 1. Horizontell layout pane
 			
-			Pane viewPersonPane = new Pane();
-			
-			viewPersonPane.getChildren().add(viewPerson());
-			Pane addPersonPane = new Pane();
-			
-			addPersonPane.getChildren().add(addPerson());
-			Pane addAccountPane = new Pane();
-			
-			addAccountPane.getChildren().add(addAccount());
-			
-			
-			ObservableList<Node> list = hb.getChildren();
+			ObservableList<Node> list = hb.getChildren(); //1. Den horizontella panen tar 2. Anchorpane och viewPersonPane och lägger dem som barn till hb
 			list.add(ap);
-			list.add(viewPersonPane);
+			list.add(viewPerson());  //Denna panen tar privat funktionen viewPerson som sitt barn
 			
-			listView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			listView.setOnMouseClicked(new EventHandler<MouseEvent>() { //Denna lyssnar på om något av menyitemsen klickas
 				
 		        @Override
-		        public void handle(MouseEvent event) {
-		        	String value = listView.getSelectionModel().getSelectedItem();
-		            list.clear();
-		            list.add(ap);
-		            if(value.equals("View Person")){
+		        public void handle(MouseEvent event) { //Om en sådan trycks så körs denna biten av kod
+		        	String value = listView.getSelectionModel().getSelectedItem(); //Denna sparar namnet på listitemen
+		            list.clear(); //Tömmer hb's lista så den har inga barn
+		            list.add(ap); //Lägger till ap för annars har man ingen meny
+		            if(value.equals("View Person")){ //Om man trycker på view Person så ska view person läggas till höger.
 		            	list.add(viewPerson());
 		            }
 		            else if(value.equals("Add Person")){
@@ -72,59 +61,59 @@ public class Main extends Application {
 			
 			
 			
-			Scene scene = new Scene(hb);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
-			primaryStage.setScene(scene);
-			primaryStage.setMaximized(true);
-			primaryStage.show();
+			Scene scene = new Scene(hb); //Huvudpane allting som inte är det som är "operativramen"
+			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm()); //Lägger till stylesen från application.css till hela "contenten"
+			primaryStage.setScene(scene); //Fönstret får sin content
+			primaryStage.setMaximized(true); //Sätter fönstret till full size så den fyller skärmen
+			primaryStage.show(); //Displayar "programmet" till skärmen
 		} catch(Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(); //Fångar någon exception som skulle kunna hända
 		}
 	}
 	
 	public static void main(String[] args) {
-		launch(args);
+		launch(args); //Kör programmet!
 	}
 	
-	private static VBox viewPerson(){
+	private static VBox viewPerson(){ //Om man klickar på view person i menyn så displayar den högra sidan denna funktion som returnerar en vertikal layout pane
 		
-		VBox vb = new VBox();
-		HBox hb = new HBox();
-		ObservableList<Node> hList = hb.getChildren();
+		VBox vb = new VBox(); //Main pane, där allting slutligen som ska returneras ligger i.
+		HBox hb = new HBox(); //En horizontell layout pane som innehåller en input och en hitta person knapp. Den är horizontell så att knappen hamnar till höger om inputen istället för under.
+		ObservableList<Node> hList = hb.getChildren(); //skapar en lista så man kan lägga till mer än ett barn.
 		TextField findPerson = new TextField();
 		
 		Button btn1 = new Button("Find Person");
-		Button btn = new Button("Remove Person");
+		Button btn = new Button("Remove Person"); //Läggs till under personnummeret
 		
 		hList.add(findPerson);
 		hList.add(btn1);
-		hb.setMargin(findPerson, new Insets(0,0,0,20));
+		hb.setMargin(findPerson, new Insets(0,0,0,20)); //Flyttar inputen 20 px till höger så den inte ligger intill kanten
 		
 		ObservableList<Node> list = vb.getChildren();
-		Label personLabel = new Label("PERSON");
+		Label personLabel = new Label("PERSON"); //Titel, alla labels som har set id title har större 
 		personLabel.setId("title");
 		Label detailsLabel = new Label("DETAILS");
 		detailsLabel.setId("title");
 		Label accountsLabel = new Label("ACCOUNTS");
 		accountsLabel.setId("title");
 		
-		list.add(personLabel);
-		list.add(hb);
+		list.add(personLabel); //Lägger till titeln
+		list.add(hb); //Lägger till inputen med find person knappen 
 		list.add(detailsLabel);
 		list.add(new Label("Name:"));
-		list.add(new Label(ctrl.getName()));
+		list.add(new Label(ctrl.getName())); //Hämtar namnet på personen som är just nu person, om default så kör default person annars finns det en riktig användarperson
 		list.add(new Label("Personal Identity Number:"));
-		list.add(new Label(ctrl.getPNbr()));
-		list.add(btn);
+		list.add(new Label(ctrl.getPNbr())); //Hämtar personnummret
+		list.add(btn); //Knappen som raderar person
 		vb.setMargin(btn, new Insets(7,0,5,20));
 		list.add(accountsLabel);
-		for(String[] account: ctrl.getAccounts()){
+		for(String[] account: ctrl.getAccounts()){ //Tar fram personens alla account
 			list.add(new Label("Account Number:"));
-			list.add(new Label(account[0]));
+			list.add(new Label(account[0])); //Account nummret i account
 			list.add(new Label("Balance:"));
-			list.add(new Label(account[1]));
+			list.add(new Label(account[1])); //Balancen i account
 		}
-		btn.setOnAction(e -> {
+		btn.setOnAction(e -> { //Raderar knappen, tar bort nuvarande person och displayar default person. Allting är som ovanstående.
 			ctrl.removeCurrentPerson();
 			list.clear();
 			
@@ -145,7 +134,7 @@ public class Main extends Application {
 				list.add(new Label(account[1]));
 			}
 		});
-		btn1.setOnAction(e -> {
+		btn1.setOnAction(e -> { //Letar efter person, om personen finns så displayas det annars displayas default person
 			ctrl.getPersonalData(findPerson.getText());
 			list.clear();
 			
@@ -170,7 +159,7 @@ public class Main extends Application {
 		return vb;
 	}
 	
-	private static VBox addPerson(){
+	private static VBox addPerson(){ //Displayar addPerson panen
 		VBox vb = new VBox();
 		
 		
@@ -196,7 +185,7 @@ public class Main extends Application {
 		
 		Button add = new Button("Add");
 		vb.setMargin(add, new Insets(7,0,5,20));
-		add.setOnAction(e -> {
+		add.setOnAction(e -> { //Add hämtar texten som finns i inputsen och skapar en ny person med hjälp av de namnet
 			ctrl.addPerson(tf.getText(), tf1.getText());
 		});
 		ObservableList<Node> list = vb.getChildren();
@@ -208,7 +197,7 @@ public class Main extends Application {
 		return vb;
 	}
 	
-	private static VBox addAccount(){
+	private static VBox addAccount(){ //Visar en pane som låter en lägga till en nytt konto till en person
 		VBox vb = new VBox();
 		Label title = new Label("ACCOUNT");
 		title.setId("title");
@@ -239,7 +228,7 @@ public class Main extends Application {
 		
 		Button add = new Button("Add");
 		vb.setMargin(add, new Insets(7,0,5,20));
-		add.setOnAction(e -> {
+		add.setOnAction(e -> { //Hämtar texten hos de tre inputsen och skapar ett konto baserat på det kopplat till det personnummret.
 			ctrl.addAccount(tf.getText(), tf1.getText(), tf2.getText());
 		});
 		
